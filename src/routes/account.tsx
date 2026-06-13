@@ -24,7 +24,7 @@ import { formatPrice } from "@/data/catalog";
 import { toast } from "sonner";
 
 const accountSearchSchema = z.object({
-  tab: z.enum(["profile", "orders"]).fallback("profile"),
+  tab: z.enum(["profile", "orders"]).optional(),
 });
 
 export const Route = createFileRoute("/account")({
@@ -65,7 +65,7 @@ const profileSchema = z.object({
 function AccountPage() {
   const navigate = useNavigate();
   const { tab = "profile" } = Route.useSearch();
-  const { isAuthed, profile, orders, update, logout } = useUser();
+  const { isAuthed, profile, orders = [], update, logout } = useUser();
   const cartCount = useCart((s) => s.items.reduce((n, i) => n + i.qty, 0));
   const wishCount = useCart((s) => s.wishlist.length);
 
