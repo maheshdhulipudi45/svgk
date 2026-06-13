@@ -4,8 +4,14 @@ import { motion } from "framer-motion";
 import { z } from "zod";
 import { Mail, Lock, User, ArrowRight, Sparkles } from "lucide-react";
 import { useUser } from "@/store/user";
+import { toast } from "sonner";
+
+const loginSearchSchema = z.object({
+  redirect: z.string().optional(),
+});
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s) => loginSearchSchema.parse(s),
   head: () => ({
     meta: [
       { title: "Sign In · SGK Fancy Store" },
@@ -27,7 +33,9 @@ const schema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const login = useUser((s) => s.login);
+  const register = useUser((s) => s.register);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [form, setForm] = useState({ email: "", password: "", name: "" });
   const [error, setError] = useState<string | null>(null);
@@ -40,9 +48,28 @@ function LoginPage() {
       setError(parsed.error.issues[0]?.message ?? "Please check your details");
       return;
     }
-    login(parsed.data.email, parsed.data.name);
-    navigate({ to: "/account" });
+
+    if (mode === "signup") {
+      register(parsed.data.email, parsed.data.name);
+      toast.success("Account created successfully! Welcome to SGK Fancy Store.");
+    } else {
+      login(parsed.data.email, parsed.data.name);
+      toast.success("Signed in successfully! Welcome back.");
+    }
+
+    if (redirect) {
+      try {
+        const url = new URL(redirect, window.location.origin);
+        const searchParams = Object.fromEntries(url.searchParams.entries());
+        navigate({ to: url.pathname, search: searchParams });
+      } catch (err) {
+        navigate({ to: redirect as any });
+      }
+    } else {
+      navigate({ to: "/" });
+    }
   };
+
 
   return (
     <div className="min-h-[calc(100vh-5rem)] grid lg:grid-cols-2">

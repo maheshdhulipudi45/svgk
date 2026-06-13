@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/store/cart";
 import { formatPrice } from "@/data/catalog";
 import { UPI_ID, UPI_PHONE, whatsappUrl } from "@/lib/store-config";
+import { useUser } from "@/store/user";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — SGK Fancy Store" }] }),
@@ -23,13 +24,16 @@ function Checkout() {
   const shipping = subtotal >= 999 ? 0 : items.length ? 79 : 0;
   const total = subtotal + gst + shipping;
 
+  const profile = useUser((s) => s.profile);
+  const addOrder = useUser((s) => s.addOrder);
+
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    pincode: "",
+    name: profile?.name || "",
+    phone: profile?.phone || profile?.whatsapp || "",
+    email: profile?.email || "",
+    address: profile?.address || "",
+    city: profile?.city || "",
+    pincode: profile?.pincode || "",
     txn: "",
   });
   const [screenshot, setScreenshot] = useState<string>("");
@@ -74,11 +78,31 @@ function Checkout() {
       `*Items:*\n${orderLines}\n\n` +
       `Subtotal: ${formatPrice(subtotal)}\nGST: ${formatPrice(gst)}\nShipping: ${shipping === 0 ? "FREE" : formatPrice(shipping)}\n*Total: ${formatPrice(total)}*\n\n` +
       `*UPI Txn ID:* ${form.txn}\n\nPlease verify and confirm. Thank you!`;
+
+    // Save order history locally
+    addOrder({
+      id: `SGK-${Math.floor(10000 + Math.random() * 90000)}`,
+      date: new Date().toLocaleDateString("en-IN", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      items: items.map((i) => ({
+        product: i.product,
+        qty: i.qty,
+      })),
+      total,
+      status: "Processing",
+      trackingNumber: `SGK-TRK-${Math.floor(10000000 + Math.random() * 90000000)}`,
+      txnId: form.txn,
+    });
+
     window.open(whatsappUrl(msg), "_blank");
     clear();
     toast.success("Order placed! We've opened WhatsApp to confirm.");
-    setTimeout(() => navigate({ to: "/" }), 1500);
+    setTimeout(() => navigate({ to: "/account", search: { tab: "orders" } }), 1500);
   };
+
 
   if (items.length === 0) {
     return (

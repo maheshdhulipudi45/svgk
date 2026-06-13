@@ -61,9 +61,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-secondary">
+                <Link
+                  to="/account"
+                  search={{ tab: "orders" }}
+                  className="hover:text-secondary"
+                >
                   Track Order
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="hover:text-secondary">
