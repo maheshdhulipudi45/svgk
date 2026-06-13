@@ -57,17 +57,7 @@ function LoginPage() {
       toast.success("Signed in successfully! Welcome back.");
     }
 
-    if (redirect) {
-      try {
-        const url = new URL(redirect, window.location.origin);
-        const searchParams = Object.fromEntries(url.searchParams.entries());
-        navigate({ to: url.pathname, search: searchParams });
-      } catch (err) {
-        navigate({ to: redirect as any });
-      }
-    } else {
-      navigate({ to: "/" });
-    }
+    navigate({ to: "/" });
   };
 
 
