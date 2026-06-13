@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Search, Heart, ShoppingBag, User, Moon, Sun, Menu, X, ChevronDown } from "lucide-react";
+import { Search, Heart, ShoppingBag, User, Moon, Sun, Menu, X, ChevronDown, Home, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/store/cart";
@@ -206,7 +206,7 @@ export function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             className="lg:hidden overflow-hidden border-t border-border bg-background"
           >
-            <div className="px-4 py-4 space-y-1">
+            <div className="px-4 py-4 space-y-3">
               <form onSubmit={submitSearch}>
                 <div className="relative">
                   <Search
@@ -217,36 +217,98 @@ export function Navbar() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search products…"
-                    className="w-full h-11 rounded-full pl-11 pr-4 text-sm bg-muted outline-none"
+                    className="w-full h-11 rounded-full pl-11 pr-4 text-sm bg-muted/80 border border-transparent focus:bg-card focus:border-primary/30 focus:ring-2 focus:ring-primary/15 outline-none transition-all duration-300"
                   />
                 </div>
               </form>
-              <Link to="/" className="block px-3 py-2 rounded-lg hover:bg-muted">
-                Home
-              </Link>
-              <Link to="/products" className="block px-3 py-2 rounded-lg hover:bg-muted">
-                Shop All
-              </Link>
-              <Link
-                to={isAuthed ? "/account" : "/login"}
-                className="block px-3 py-2 rounded-lg hover:bg-muted font-medium text-primary"
-              >
-                {isAuthed ? "My Account" : "Sign In / Sign Up"}
-              </Link>
-              <div className="pt-2 pb-1 px-3 text-[11px] uppercase tracking-widest text-muted-foreground">
-                Categories
-              </div>
-              <div className="grid grid-cols-2 gap-1">
-                {categories.map((c) => (
+              
+              {/* main links */}
+              <div className="space-y-1">
+                <Link
+                  to="/"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                      <Home size={16} />
+                    </div>
+                    <span className="text-sm font-medium">Home</span>
+                  </div>
+                  <ChevronRight size={14} className="text-muted-foreground/60" />
+                </Link>
+                
+                <Link
+                  to="/products"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                      <ShoppingBag size={16} />
+                    </div>
+                    <span className="text-sm font-medium">Shop All</span>
+                  </div>
+                  <ChevronRight size={14} className="text-muted-foreground/60" />
+                </Link>
+                
+                {isAuthed ? (
                   <Link
-                    key={c.id}
-                    to="/products"
-                    search={{ category: c.id, q: undefined }}
-                    className="px-3 py-2 rounded-lg text-sm hover:bg-muted"
+                    to="/account"
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors"
                   >
-                    {c.name}
+                    <div className="flex items-center gap-3">
+                      <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                        <User size={16} />
+                      </div>
+                      <span className="text-sm font-medium">My Account</span>
+                    </div>
+                    <ChevronRight size={14} className="text-muted-foreground/60" />
                   </Link>
-                ))}
+                ) : (
+                  <div className="grid grid-cols-2 gap-2.5 pt-1.5">
+                    <Link
+                      to="/login"
+                      search={{ mode: "signin", redirect: pathname }}
+                      className="flex items-center justify-center h-10 rounded-xl text-xs font-semibold border border-border/80 hover:bg-muted active:scale-[0.98] transition-all"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/login"
+                      search={{ mode: "signup", redirect: pathname }}
+                      className="flex items-center justify-center h-10 rounded-xl text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/95 shadow-soft active:scale-[0.98] transition-all"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* categories */}
+              <div className="pt-2 border-t border-border/40">
+                <div className="px-3 pb-2 text-[11px] uppercase tracking-widest text-muted-foreground/80 font-bold">
+                  Categories
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map((c) => (
+                    <Link
+                      key={c.id}
+                      to="/products"
+                      search={{ category: c.id, q: undefined }}
+                      className="flex items-center gap-2.5 p-2 rounded-xl bg-card border border-border/40 hover:bg-muted active:scale-[0.98] transition-all duration-200"
+                    >
+                      <img
+                        src={c.image}
+                        alt={c.name}
+                        className="w-9 h-9 rounded-lg object-cover shrink-0"
+                        loading="lazy"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-foreground leading-tight truncate">{c.name}</div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5">{c.count} products</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>

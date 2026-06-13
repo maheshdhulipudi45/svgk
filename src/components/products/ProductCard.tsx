@@ -19,21 +19,23 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       transition={{ duration: 0.5, delay: (index % 4) * 0.06 }}
       className="group relative"
     >
-      <Link
-        to="/products/$id"
-        params={{ id: product.id }}
-        className="block relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted ring-1 ring-border shadow-card hover:shadow-luxe transition-shadow"
-      >
-        <img
-          src={product.image}
-          alt={product.name}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-dark/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="block relative aspect-[3/4] overflow-hidden rounded-2xl bg-muted ring-1 ring-border shadow-card hover:shadow-luxe transition-shadow">
+        <Link
+          to="/products/$id"
+          params={{ id: product.id }}
+          className="absolute inset-0 z-0"
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        </Link>
 
         {/* badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none z-10">
           {product.badge && (
             <span
               className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full text-white ${
@@ -57,7 +59,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         {/* quick actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all">
+        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all z-10">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -85,7 +87,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         {/* dual CTA on hover */}
-        <div className="absolute inset-x-3 bottom-3 flex gap-2 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+        <div className="absolute inset-x-3 bottom-3 flex gap-2 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10">
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -107,7 +109,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <Zap size={13} /> Buy Now
           </Link>
         </div>
-      </Link>
+      </div>
 
       <div className="mt-4 px-1">
         <div className="flex items-center gap-1 mb-1.5">

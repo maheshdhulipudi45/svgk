@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 const loginSearchSchema = z.object({
   redirect: z.string().optional(),
+  mode: z.enum(["signin", "signup"]).optional(),
 });
 
 export const Route = createFileRoute("/login")({
@@ -33,10 +34,10 @@ const schema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { redirect } = Route.useSearch();
+  const { redirect, mode: searchMode } = Route.useSearch();
   const login = useUser((s) => s.login);
   const register = useUser((s) => s.register);
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">(searchMode || "signin");
   const [form, setForm] = useState({ email: "", password: "", name: "" });
   const [error, setError] = useState<string | null>(null);
 
